@@ -40,7 +40,7 @@ public class Login extends JFrame {
 	 */
 	public Login() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 357, 271);
+	    setBounds(100, 100, 400, 250);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -77,9 +77,22 @@ public class Login extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String user = usertxt.getText();
 				String password = passwordtxt.getText();
+				new AdminPanel().setVisible(true);
+				dispose();
 			}
 		});
 		btnNewButton.setBounds(90, 164, 85, 21);
 		contentPane.add(btnNewButton);
+
+		
+		JButton switchButton = new JButton("Switch to Player");
+		switchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new PlayerLogin().setVisible(true);
+				dispose();
+			}
+		});
+		switchButton.setBounds(249, 10, 127, 32);
+		contentPane.add(switchButton);
 	}
 }

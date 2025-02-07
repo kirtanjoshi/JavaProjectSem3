@@ -1,4 +1,4 @@
-package Assignment;
+ package Assignment;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.swing.table.DefaultTableModel;
 
 public class Manager {
@@ -22,20 +21,12 @@ public class Manager {
 
     public static void connection() {
         try {
-            // Load MySQL JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("JDBC Driver Loaded Successfully");
-
-            // Create database if it does not exist
             createDatabase();
-
-            // Connect to the database and create table
             createTable();
-
-        } catch (ClassNotFoundException e) {
-            System.out.println("Error loading JDBC Driver: " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -55,31 +46,31 @@ public class Manager {
 
             String createTableSql = "CREATE TABLE IF NOT EXISTS questions (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY, " +
-            		"difficulty TEXT, "+
+                    "difficulty TEXT, " +
                     "question TEXT, " +
                     "optionA TEXT, " +
                     "optionB TEXT, " +
                     "optionC TEXT, " +
-                    "optionD TEXT)";
+                    "optionD TEXT, " +
+                    "correctAnswer TEXT)";
             stmt.executeUpdate(createTableSql);
             System.out.println("Table created successfully or already exists");
         }
     }
 
-    public static int addQuestion( String difficulty,String question, String optionA, String optionB, String optionC, String optionD) {
-        String sql = "INSERT INTO questions (difficulty,question, optionA, optionB, optionC, optionD) VALUES (?, ?, ?, ?, ?,?)";
+    public static int addQuestion(String difficulty, String question, String optionA, String optionB, String optionC, String optionD, String correctAnswer) {
+        String sql = "INSERT INTO questions (difficulty, question, optionA, optionB, optionC, optionD, correctAnswer) VALUES (?, ?, ?, ?, ?, ?, ?)";
         int generatedId = -1;
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        	 pstmt.setString(1, difficulty);
+            pstmt.setString(1, difficulty);
             pstmt.setString(2, question);
-           
             pstmt.setString(3, optionA);
             pstmt.setString(4, optionB);
             pstmt.setString(5, optionC);
             pstmt.setString(6, optionD);
-       
+            pstmt.setString(7, correctAnswer);
             pstmt.executeUpdate();
 
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -92,19 +83,18 @@ public class Manager {
         return generatedId;
     }
 
-
-    public static void updateQuestion(int id, String difficulty, String question, String optionA, String optionB, String optionC, String optionD ) {
-        String sql = "UPDATE questions SET difficulty = ?, question = ?, optionA = ?, optionB = ?, optionC = ?, optionD = ?  WHERE id = ?";
+    public static void updateQuestion(int id, String difficulty, String question, String optionA, String optionB, String optionC, String optionD, String correctAnswer) {
+        String sql = "UPDATE questions SET difficulty = ?, question = ?, optionA = ?, optionB = ?, optionC = ?, optionD = ?, correctAnswer = ? WHERE id = ?";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        	pstmt.setString(1, difficulty);
+            pstmt.setString(1, difficulty);
             pstmt.setString(2, question);
-            
             pstmt.setString(3, optionA);
             pstmt.setString(4, optionB);
             pstmt.setString(5, optionC);
             pstmt.setString(6, optionD);
-            pstmt.setInt(7, id);
+            pstmt.setString(7, correctAnswer);
+            pstmt.setInt(8, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -117,11 +107,6 @@ public class Manager {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
-
-            // Reset AUTO_INCREMENT to maintain sequential IDs
-            try (Statement stmt = conn.createStatement()) {
-                stmt.executeUpdate("ALTER TABLE questions AUTO_INCREMENT = 1");
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -134,24 +119,20 @@ public class Manager {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt("id"), rs.getString("difficulty"), rs.getString("question"), rs.getString("optionA"),
-                        rs.getString("optionB"), rs.getString("optionC"), rs.getString("optionD")});
+                model.addRow(new Object[]{rs.getInt("id"), rs.getString("difficulty"), rs.getString("question"),
+                        rs.getString("optionA"), rs.getString("optionB"), rs.getString("optionC"),
+                        rs.getString("optionD"), rs.getString("correctAnswer")});
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-
-    public static ResultSet getQuestionById(int questionId) throws SQLException {
-    	String sql = "SELECT * FROM questions WHERE id = ?";
-
+    
+    public static ResultSet getQuestionByDifficulty(String difficulty) throws SQLException {
+        String sql = "SELECT * FROM questions WHERE difficulty = ? ORDER BY RAND()";
         Connection conn = getConnection();
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, questionId);
-        return pstmt.executeQuery(); // Returns the result set
+        pstmt.setString(1, difficulty);
+        return pstmt.executeQuery();
     }
-
-
 }
-
