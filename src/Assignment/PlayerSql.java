@@ -30,7 +30,7 @@ public class PlayerSql {
     private static void createTable() throws SQLException {
         String createTableSql = "CREATE TABLE IF NOT EXISTS playerDetails (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "name VARCHAR(255), " +
+                "name VARCHAR(255) UNIQUE, " +
                 "level VARCHAR(50), " +
                 "score1 INT DEFAULT 0, " +
                 "score2 INT DEFAULT 0, " +
@@ -46,23 +46,45 @@ public class PlayerSql {
     }
 
     // Insert New Player into Database
+//    public static int insertDetails(String name, String level) {
+//        String sql = "INSERT INTO playerDetails (name, level) VALUES (?, ?)";
+//        try (Connection conn = getConnection();
+//             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+//            pstmt.setString(1, name);
+//            pstmt.setString(2, level);
+//            pstmt.executeUpdate();
+//            
+//            ResultSet rs = pstmt.getGeneratedKeys();
+//            if (rs.next()) {
+//                return rs.getInt(1); // Return generated player ID
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return -1; // Return -1 if insertion fails
+//    }
+    
+    
     public static int insertDetails(String name, String level) {
-        String sql = "INSERT INTO playerDetails (name, level) VALUES (?, ?)";
+        String sql = "INSERT INTO playerDetails (name, level) VALUES (?, ?) " +
+                     "ON DUPLICATE KEY UPDATE level = VALUES(level)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, name);
             pstmt.setString(2, level);
             pstmt.executeUpdate();
-            
+
+            // Retrieve the ID of the inserted/updated player
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                return rs.getInt(1); // Return generated player ID
+                return rs.getInt(1); // Return player ID
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Return -1 if insertion fails
+        return -1; // Return -1 if insertion/updation fails
     }
+
 
     // Save Player's Score for Each Round
     public static void saveRoundScore(int playerId, int round, int score) {
