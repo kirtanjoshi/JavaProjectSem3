@@ -1,4 +1,3 @@
-
 package Assignment;
 
 import java.sql.*;
@@ -45,24 +44,6 @@ public class PlayerSql {
         }
     }
 
-    // Insert New Player into Database
-//    public static int insertDetails(String name, String level) {
-//        String sql = "INSERT INTO playerDetails (name, level) VALUES (?, ?)";
-//        try (Connection conn = getConnection();
-//             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-//            pstmt.setString(1, name);
-//            pstmt.setString(2, level);
-//            pstmt.executeUpdate();
-//            
-//            ResultSet rs = pstmt.getGeneratedKeys();
-//            if (rs.next()) {
-//                return rs.getInt(1); // Return generated player ID
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return -1; // Return -1 if insertion fails
-//    }
     
     
     public static int insertDetails(String name, String level) {
@@ -205,7 +186,7 @@ public class PlayerSql {
     public static void generateReport() {
         System.out.println("\n--- Competitor Details ---");
 
-        // Use `PlayerSql.getPlayerScores` method to retrieve and print details in a table format
+        // Use PlayerSql.getPlayerScores method to retrieve and print details in a table format
         String sql = "SELECT * FROM playerDetails ";
         try (var conn = PlayerSql.getConnection();
              var pstmt = conn.prepareStatement(sql)) {
@@ -237,7 +218,7 @@ public class PlayerSql {
     public static void searchCompetitorByID(int playerId) {
         System.out.println("\n--- Competitor Details ---");
 
-        // Use `PlayerSql.getPlayerScores` method to retrieve and print details in a table format
+        // Use PlayerSql.getPlayerScores method to retrieve and print details in a table format
         String sql = "SELECT * FROM playerDetails WHERE id = ?";
         try (var conn = PlayerSql.getConnection();
              var pstmt = conn.prepareStatement(sql)) {

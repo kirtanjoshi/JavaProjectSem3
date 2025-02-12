@@ -2,7 +2,25 @@ package Assignment;
 
 import java.util.Scanner;
 
+/**
+ * The {@code QuizGameConsole} class provides a console-based interface for managing
+ * quiz competitors. Users can generate reports, view top performers, retrieve statistics,
+ * and search for competitors by ID.
+ * 
+ * <p>This class interacts with the {@code PlayerSql} class to fetch and display data.</p>
+ * 
+ * @author [Your Name]
+ * @version 1.0
+ * @since 2025
+ */
 public class QuizGameConsole {
+
+    /**
+     * The main method that starts the console-based application.
+     * Provides a menu-driven interface for the user.
+     * 
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -45,30 +63,40 @@ public class QuizGameConsole {
         }
     }
 
-    // Option 1: Generate Full Report
+    /**
+     * Generates and displays a full report of all competitors.
+     * Calls {@code PlayerSql.generateReport()} to retrieve data.
+     */
     private static void generateFullReport() {
         System.out.println("\n--- Full Report ---");
         PlayerSql.generateReport();
-        // Replace with actual implementation to display all competitors' details.
     }
 
-    // Option 2: Display Top Performer
+    /**
+     * Displays the top-performing competitor based on total score.
+     * Calls {@code PlayerSql.getHighestScoringPlayer()} to retrieve data.
+     */
     private static void displayTopPerformer() {
         System.out.println("\n--- Top Performer ---");
         PlayerSql.getHighestScoringPlayer();
-        // Replace with actual implementation to fetch the top scorer.
     }
 
-    // Option 3: Generate Statistics
+    /**
+     * Generates and displays quiz statistics such as total competitors and average scores.
+     * Calls {@code PlayerSql.generateStatistics()} to retrieve data.
+     */
     private static void generateStatistics() {
-       PlayerSql.generateStatistics();
-        // Implement logic to calculate and display statistics (e.g., average scores, total competitors).
+        PlayerSql.generateStatistics();
     }
 
-    // Option 4: Search Competitor by ID
+    /**
+     * Searches for a competitor by their unique ID and displays their details.
+     * Calls {@code PlayerSql.searchCompetitorByID(int)} to retrieve data.
+     * 
+     * @param id The ID of the competitor to search for.
+     */
     private static void searchCompetitorByID(int id) {
         System.out.println("\n--- Competitor Details ---");
         PlayerSql.searchCompetitorByID(id);
-        // Replace with actual implementation to search and display competitor details.
     }
 }

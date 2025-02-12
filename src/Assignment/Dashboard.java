@@ -7,14 +7,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AdminPanel extends JFrame {
+public class Dashboard extends JFrame {
     private JTextField questionField, optionAField, optionBField, optionCField, optionDField;
     private JComboBox<String> difficultyBox, correctAnswerBox;
     private JTable questionTable;
     private DefaultTableModel tableModel;
     private JButton leaderBoard;
 
-    public AdminPanel() {
+    public Dashboard() {
         setTitle("Admin Panel - Quiz Manager");
         setSize(850, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,7 +31,7 @@ public class AdminPanel extends JFrame {
         optionCField = new JTextField();
         optionDField = new JTextField();
 
-        String[] difficultyLevels = {"Easy", "Intermediate", "Hard"};
+        String[] difficultyLevels = {"Beginner", "Intermediate", "Advance"};
         difficultyBox = new JComboBox<>(difficultyLevels);
 
         String[] options = {"Option A", "Option B", "Option C", "Option D"};
@@ -158,7 +158,7 @@ public class AdminPanel extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new AdminPanel().setVisible(true));
+        SwingUtilities.invokeLater(() -> new Dashboard().setVisible(true));
         Manager.connection();
     }
 }
