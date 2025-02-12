@@ -16,7 +16,7 @@ import javax.swing.JTable;
  * <p>This class extends {@code JFrame} and uses {@code DefaultTableModel}
  * to manage the table data.
  * 
- * @author [Your Name]
+ * @author Kirti Kirtan Joshi
  * @version 1.0
  * @since 2025
  */

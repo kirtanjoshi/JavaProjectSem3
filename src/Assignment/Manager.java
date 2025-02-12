@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
  * 
  * <p>This class uses MySQL as the database and requires the MySQL JDBC driver.</p>
  * 
- * @author [Your Name]
+ * @author Kirti Kirtan Joshi
  * @version 1.0
  * @since 2025
  */
@@ -163,21 +163,31 @@ public class Manager {
         }
     }
 
-    /**
-     * Deletes a question from the database.
-     * 
-     * @param id The ID of the question to delete.
-     */
+  
+    
+    
     public static void deleteQuestion(int id) {
-        String sql = "DELETE FROM questions WHERE id = ?";
+        String deleteSql = "DELETE FROM questions WHERE id = ?";
+        String resetAutoIncrementSql = "ALTER TABLE questions AUTO_INCREMENT = (SELECT COALESCE(MAX(id), 0) FROM questions) + 1";
+
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.executeUpdate();
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+
+            deleteStmt.setInt(1, id);
+            int rowsAffected = deleteStmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                // Reset AUTO_INCREMENT only if deletion was successful
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.executeUpdate(resetAutoIncrementSql);
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Loads all questions from the database into a table model.

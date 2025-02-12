@@ -13,7 +13,7 @@ import javax.swing.border.EmptyBorder;
  * <p>This class extends {@code JFrame} and interacts with {@code PlayerSql} 
  * to store player details in the database.</p>
  * 
- * @author [Your Name]
+ * @author Kirti Kirtan Joshi
  * @version 1.0
  * @since 2025
  */
@@ -120,15 +120,15 @@ public class PlayerLogin extends JFrame {
         lblNewLabel.setBounds(67, 15, 112, 26);
         contentPane.add(lblNewLabel);
 
-        // Action Listener for Login Button
+        
         btnLogin.addActionListener(new ActionListener() {
-            /**
-             * Handles the login action.
-             * Validates input fields, stores player details in the database,
-             * and starts the game if the login is successful.
-             * 
-             * @param e The event triggered when the login button is clicked.
-             */
+        	/**
+//           * Handles the login action.
+//           * Validates input fields, stores player details in the database,
+//           * and starts the game if the login is successful.
+//           * 
+//           * @param e The event triggered when the login button is clicked.
+//           */
             public void actionPerformed(ActionEvent e) {
                 String playerName = nameField.getText();
                 String playerLevel = (String) difficultyBox.getSelectedItem();
@@ -136,14 +136,21 @@ public class PlayerLogin extends JFrame {
                 if (playerName.isEmpty() || playerLevel.isEmpty()) {
                     messageLabel.setText("Please enter all fields.");
                 } else {
-                    // Insert player details into the database
+                    int roundsPlayed = PlayerSql.getRoundsPlayed(playerName);
+
+                    if (roundsPlayed >= 5) {
+                        JOptionPane.showMessageDialog(null, "You have already completed 5 rounds. You cannot play again.", "Game Over", JOptionPane.WARNING_MESSAGE);
+                        dispose(); // Close login page
+                        return;
+                    }
+
+                    // If player has NOT played 5 rounds, proceed normally
                     int playerId = PlayerSql.insertDetails(playerName, playerLevel);
                     System.out.println("Player ID: " + playerId);
-
                     messageLabel.setText("Welcome, " + playerName + " (Level: " + playerLevel + ")");
-                    
+
                     // Set player session details
-                    PlayerSession.getInstance().setPlayerId(playerId, playerLevel);
+                    PlayerSession.getInstance().setPlayerId(playerName,playerId, playerLevel);
 
                     // Open Player dashboard
                     new Player().setVisible(true);
@@ -151,5 +158,6 @@ public class PlayerLogin extends JFrame {
                 }
             }
         });
+
     }
 }

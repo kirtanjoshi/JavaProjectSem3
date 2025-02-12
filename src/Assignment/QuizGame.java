@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * <p>This class interacts with {@code Manager} to retrieve questions 
  * and {@code PlayerSql} to save round scores.</p>
  * 
- * @author [Your Name]
+ * @author Kirti Kirtan Joshi
  * @version 1.0
  * @since 2025
  */
@@ -109,6 +109,9 @@ public class QuizGame extends JFrame {
         contentPane.add(questionLabel, BorderLayout.NORTH);
         contentPane.add(optionsPanel, BorderLayout.CENTER);
         contentPane.add(nextButton, BorderLayout.SOUTH);
+        
+        
+        
 
         // Load the first question
         loadNextQuestion();
@@ -121,11 +124,11 @@ public class QuizGame extends JFrame {
     private void loadNextQuestion() {
         try {
             PlayerSession session = PlayerSession.getInstance();
-            int playerId = session.getPlayerId();
+            String playerName = session.getPlayerName();
             String playerLevel = session.getPlayerlevel();
             round = session.getCurrentRound(); // Retrieve stored round number
 
-            System.out.println("Player ID: " + playerId);
+            System.out.println("Player ID: " + playerName);
             System.out.println("Player Level: " + playerLevel);
             System.out.println("Current Round: " + round);
 
@@ -145,7 +148,7 @@ public class QuizGame extends JFrame {
                 currentQuestionIndex++;
             } else {
                 // Store the player's score for the round
-                PlayerSql.saveRoundScore(playerId, round, marks);
+                PlayerSql.saveRoundScore(playerName, round, marks);
 
                 if (round < MAX_ROUNDS) {
                     // Ask if the player wants to continue to the next round

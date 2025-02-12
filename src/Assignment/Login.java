@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
  * <p>This class extends {@code JFrame} and contains GUI components such as 
  * text fields for user input and buttons for authentication and navigation.</p>
  * 
- * @author [Your Name]
+ * @author Kirti Kirtan Joshi
  * @version 1.0
  * @since 2025
  */

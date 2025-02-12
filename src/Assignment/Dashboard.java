@@ -7,6 +7,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * The Dashboard class represents the Admin Panel for managing quiz questions.
+ * It provides functionalities to add, update, and delete questions.
+ * Questions include multiple-choice options, difficulty levels, and correct answers.
+ */
+
 public class Dashboard extends JFrame {
     private JTextField questionField, optionAField, optionBField, optionCField, optionDField;
     private JComboBox<String> difficultyBox, correctAnswerBox;
@@ -14,6 +20,11 @@ public class Dashboard extends JFrame {
     private DefaultTableModel tableModel;
     private JButton leaderBoard;
 
+    /**
+     * Constructor to initialize the Dashboard.
+     * Sets up the UI components and loads existing questions.
+     */
+    
     public Dashboard() {
         setTitle("Admin Panel - Quiz Manager");
         setSize(850, 750);
@@ -89,12 +100,18 @@ public class Dashboard extends JFrame {
 
         loadQuestions();
     }
-
+    
+    /**
+     * Loads existing questions into the table.
+     */
     private void loadQuestions() {
         tableModel.setRowCount(0);
         Manager.loadQuestions(tableModel);
     }
-
+    
+    /**
+     * Adds a new question to the database.
+     */
     private void addQuestion() {
         String question = questionField.getText();
         String optionA = optionAField.getText();
@@ -114,6 +131,9 @@ public class Dashboard extends JFrame {
         clearFields();
     }
 
+    /**
+     * Updates an existing question.
+     */ 
     private void updateQuestion() {
         int selectedRow = questionTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -134,7 +154,10 @@ public class Dashboard extends JFrame {
         loadQuestions();
         clearFields();
     }
-
+    
+    /**
+     * Deletes a selected question from the database.
+     */
     private void deleteQuestion() {
         int selectedRow = questionTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -146,7 +169,10 @@ public class Dashboard extends JFrame {
         Manager.deleteQuestion(id);
         loadQuestions();
     }
-
+    
+    /**
+     * Clears the input fields after an operation.
+     */
     private void clearFields() {
         questionField.setText("");
         optionAField.setText("");
@@ -157,6 +183,9 @@ public class Dashboard extends JFrame {
         correctAnswerBox.setSelectedIndex(0);
     }
 
+    /**
+     * The main method to launch the Admin Panel.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Dashboard().setVisible(true));
         Manager.connection();

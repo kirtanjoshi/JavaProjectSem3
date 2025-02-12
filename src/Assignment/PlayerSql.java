@@ -4,16 +4,30 @@ import java.sql.*;
 
 import javax.swing.table.DefaultTableModel;
 
+
+/**
+ * The PlayerSql class provides database management functionalities
+ * for handling player data, including inserting, updating, and retrieving player scores.
+ */
+
 public class PlayerSql {
     private static final String URL = "jdbc:mysql://localhost:3306/competitordb";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
+    /**
+     * Establishes a connection to the database.
+     * @return a Connection object
+     * @throws SQLException if a database access error occurs
+     */
     // Establish Database Connection
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
-
+    
+    /**
+     * Initializes the database and creates the player table if it does not exist.
+     */
     // Initialize Database and Create Table if Not Exists
     public static void playerConnection() {
         try {
@@ -25,6 +39,11 @@ public class PlayerSql {
         }
     }
 
+    
+    /**
+     * Creates the playerDetails table if it does not exist.
+     * @throws SQLException if a database error occurs
+     */
     // Create Table for Player Details
     private static void createTable() throws SQLException {
         String createTableSql = "CREATE TABLE IF NOT EXISTS playerDetails (" +
@@ -44,7 +63,12 @@ public class PlayerSql {
         }
     }
 
-    
+    /**
+     * Inserts or updates player details in the database.
+     * @param name the player's name
+     * @param level the player's level
+     * @return the player ID if successful, otherwise -1
+     */
     
     public static int insertDetails(String name, String level) {
         String sql = "INSERT INTO playerDetails (name, level) VALUES (?, ?) " +
@@ -66,20 +90,26 @@ public class PlayerSql {
         return -1; // Return -1 if insertion/updation fails
     }
 
-
+    /**
+     * Saves the player's score for a specific round.
+     * @param playerName the player's name
+     * @param round the round number
+     * @param score the score obtained
+     */
+    
     // Save Player's Score for Each Round
-    public static void saveRoundScore(int playerId, int round, int score) {
+    public static void saveRoundScore(String playerName, int round, int score) {
         String column = "score" + round;
-        String sql = "UPDATE playerDetails SET " + column + " = ? WHERE id = ?";
+        String sql = "UPDATE playerDetails SET " + column + " = ? WHERE name = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, score);
-            pstmt.setInt(2, playerId);
+            pstmt.setString(2, playerName);
             int rowsAffected = pstmt.executeUpdate();
 
             if (rowsAffected > 0) {
-                System.out.println("Score updated for round " + round + " for player ID: " + playerId);
+                System.out.println("Score updated for round " + round + " for player ID: " + playerName);
             } else {
                 System.out.println("Player ID not found.");
             }
@@ -87,6 +117,11 @@ public class PlayerSql {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Retrieves and prints the scores of a specific player.
+     * @param playerId the player's ID
+     */
 
     // Retrieve Player Score Data
     public static void getPlayerScores(int playerId) {
@@ -115,7 +150,10 @@ public class PlayerSql {
     }
     
     
-
+    /**
+     * Loads all player details into a table model.
+     * @param model the table model to populate
+     */
     public static void loadPlayerDetails(DefaultTableModel model) {
         model.setRowCount(0);
         String sql = "SELECT * FROM playerDetails";
@@ -131,7 +169,12 @@ public class PlayerSql {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Retrieves and prints the highest-scoring player based on the total score
+     * calculated from all rounds.
+     * If multiple players have the highest score, only one is returned.
+     * If no players exist, it prints an appropriate message.
+     */
     public static void getHighestScoringPlayer() {
         String sql = "SELECT id, name, level, " +
                      "(score1 + score2 + score3 + score4 + score5) AS total_score " +
@@ -154,7 +197,10 @@ public class PlayerSql {
             e.printStackTrace();
         }
     }
-    
+    /**
+     * Generates and prints statistics about the players, including total competitors
+     * and average scores for each round.
+     */
     public static void generateStatistics() {
         System.out.println("\n--- Statistics ---");
 
@@ -183,6 +229,11 @@ public class PlayerSql {
         }
     }
 
+    
+    /**
+     * Generates and prints a report of all competitors, displaying their details
+     * in a tabular format.
+     */
     public static void generateReport() {
         System.out.println("\n--- Competitor Details ---");
 
@@ -213,7 +264,11 @@ public class PlayerSql {
         }
     }
     
-    
+    /**
+     * Searches for a competitor by their ID and prints their details in a tabular format.
+     * 
+     * @param playerId The ID of the competitor to search for.
+     */
     
     public static void searchCompetitorByID(int playerId) {
         System.out.println("\n--- Competitor Details ---");
@@ -247,6 +302,37 @@ public class PlayerSql {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Retrieves the number of rounds a competitor has played based on their name.
+     * A round is considered played if the score is greater than zero.
+     * 
+     * @param playerName The name of the competitor.
+     * @return The number of rounds the competitor has played.
+     */
+    
+    public static int getRoundsPlayed(String playerName) {
+        String sql = "SELECT ( " +
+                     "CASE WHEN score1 > 0 THEN 1 ELSE 0 END + " +
+                     "CASE WHEN score2 > 0 THEN 1 ELSE 0 END + " +
+                     "CASE WHEN score3 > 0 THEN 1 ELSE 0 END + " +
+                     "CASE WHEN score4 > 0 THEN 1 ELSE 0 END + " +
+                     "CASE WHEN score5 > 0 THEN 1 ELSE 0 END ) AS totalRounds " +
+                     "FROM playerDetails WHERE name = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("totalRounds"); // Returns the number of rounds played
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // Default if no rounds played
+    }
+
+
 
 	
 }

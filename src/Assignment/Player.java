@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  * 
  * <p>This class extends {@code JFrame} and contains buttons to navigate to different sections of the quiz application.</p>
  * 
- * @author [Your Name]
+ * @author Kirti Kirtan Joshi
  * @version 1.0
  * @since 2025
  */
